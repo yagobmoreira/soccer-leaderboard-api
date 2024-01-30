@@ -11,7 +11,8 @@ export default {
       },
       teamName: {
         type: DataTypes.STRING,
-        field: "team_name"
+        field: "team_name",
+        allowNull: false
       }
     });
   },
