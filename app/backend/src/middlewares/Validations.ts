@@ -5,9 +5,10 @@ class Validations {
   static validateLogin(req: Request, res: Response, next: NextFunction) {
     const data = req.body;
     const { error } = schemas.loginSchema.validate(data);
+    console.log(error);
 
     if (error) {
-      return res.status(400).json(error.message);
+      return res.status(400).json({ message: error.message });
     }
 
     next();

@@ -1,6 +1,7 @@
 import * as sinon from 'sinon';
 import * as chai from 'chai';
-import * as JWT from 'jsonwebtoken'
+import * as JWT from 'jsonwebtoken';
+import * as bcrypt from 'bcryptjs';
 import SequelizeUser from '../database/models/SequelizeUser';
 import { existingUser, validLoginBody } from './mocks/login.mocks';
 import Validations from '../middlewares/Validations';
@@ -18,8 +19,9 @@ const { expect } = chai;
 describe('Login tests', function () {
   it('Deve retornar um token caso o login seja feito corretamente', async function () {
     const mockFindOneReturn = SequelizeUser.build(existingUser);
-    sinon.stub(JWT, 'sign').resolves('any-token');
     sinon.stub(SequelizeUser, 'findOne').resolves(mockFindOneReturn);
+    sinon.stub(bcrypt, 'compare').resolves(true);
+    // sinon.stub(JWT, 'sign').resolves('any-token');
     sinon.stub(Validations, 'validateLogin').returns(undefined);
 
     const { status, body } = await chai
