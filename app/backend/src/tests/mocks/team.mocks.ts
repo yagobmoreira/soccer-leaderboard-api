@@ -6,5 +6,6 @@ const team = {
 const teams = [team];
 
 export {
-  teams
+  teams,
+  team
 }
