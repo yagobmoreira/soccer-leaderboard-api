@@ -15,4 +15,15 @@ export default class MatchController {
     const { status, data } = await this.matchService.getAllTeams();
     res.status(mapStatusHTTP(status)).json(data);
   }
+
+  public async updateMatch(req: Request, res: Response) {
+    const { id } = req.params;
+    const { status, data } = await this.matchService.updateMatchProgress(Number(id));
+
+    if (status !== 'SUCCESSFUL') {
+      return res.status(mapStatusHTTP(status)).json(data);
+    }
+
+    res.status(200).json(data);
+  }
 }

@@ -38,4 +38,11 @@ export default class MatchModel implements IMatchModel {
     });
     return dbData;
   }
+
+  async update(id: number, data: Partial<IMatch>): Promise<IMatch | null> {
+    const [affectedRows] = await this.model.update(data, { where: { id } });
+    if (affectedRows === 0) return null;
+
+    return this.findById(id);
+  }
 }
