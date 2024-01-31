@@ -29,7 +29,7 @@ export default class UserService {
     const payload = { sub: user.id, role: user.role, email: user.email };
     const secret = process.env.JWT_SECRET ?? 'any-secret';
 
-    const token = jwt.sign(payload, secret, { expiresIn: '30m' });
+    const token = jwt.sign(payload, secret, { expiresIn: '1d' });
     return { status: 'SUCCESSFUL', data: { token } };
   }
 }

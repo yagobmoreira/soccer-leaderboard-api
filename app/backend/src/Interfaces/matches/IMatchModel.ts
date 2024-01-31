@@ -1,6 +1,6 @@
 import { IMatch } from './IMatch';
-import { ICRUDModelReader, ICRUDModelUpdater } from '../ICRUDModel';
+import { ICRUDModelCreator, ICRUDModelReader, ICRUDModelUpdater } from '../ICRUDModel';
 
 export type IMatchModel = ICRUDModelReader<IMatch> & {
   findByQuery(q: boolean): Promise<IMatch[]>
-} & ICRUDModelUpdater<IMatch>;
+} & ICRUDModelUpdater<IMatch> & ICRUDModelCreator<IMatch>;
