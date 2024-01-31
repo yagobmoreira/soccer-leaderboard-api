@@ -1,6 +1,6 @@
 import { Op } from 'sequelize';
 import { NewEntity } from '../Interfaces';
-import { IMatch } from '../Interfaces/matches/IMatch';
+import { IMatch, IMatchWithTeamName } from '../Interfaces/matches/IMatch';
 import SequelizeMatch from '../database/models/SequelizeMatch';
 import { IMatchModel } from '../Interfaces/matches/IMatchModel';
 import SequelizeTeam from '../database/models/SequelizeTeam';
@@ -8,13 +8,13 @@ import SequelizeTeam from '../database/models/SequelizeTeam';
 export default class MatchModel implements IMatchModel {
   private model = SequelizeMatch;
 
-  async findAll(): Promise<IMatch[]> {
+  async findAll(): Promise<IMatchWithTeamName[]> {
     const dbData = await this.model.findAll({
       include: [
         { model: SequelizeTeam, as: 'homeTeam', attributes: { exclude: ['id'] } },
         { model: SequelizeTeam, as: 'awayTeam', attributes: { exclude: ['id'] } },
       ],
-    });
+    }) as unknown as IMatchWithTeamName[];
     return dbData;
   }
 

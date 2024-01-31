@@ -1,3 +1,5 @@
+import generateLeaderBoard from '../utils/leaderBoardUtils';
+import { ILeaderBoard } from '../Interfaces/leaderboard/ILeaderBoard';
 import { NewEntity } from '../Interfaces';
 import { ServiceMessage, ServiceResponse } from '../Interfaces/ServiceResponse';
 import { IMatch } from '../Interfaces/matches/IMatch';
@@ -27,14 +29,9 @@ export default class MatchService {
     if (!foundMatch) return { status: 'NOT_FOUND', data: { message: `Match ${id} not found` } };
 
     const finishedMatch = { ...foundMatch, inProgress: false };
-    const updatedMatch = await this.matchModel.update(id, finishedMatch);
 
-    if (!updatedMatch) {
-      return {
-        status: 'CONFLICT',
-        data: { message: `There are no updates to perform in Match ${id}` },
-      };
-    }
+    await this.matchModel.update(id, finishedMatch);
+
     return { status: 'SUCCESSFUL', data: { message: 'Finished' } };
   }
 
@@ -48,14 +45,9 @@ export default class MatchService {
       homeTeamGoals: score.homeTeamGoals,
       awayTeamGoals: score.awayTeamGoals,
     };
-    const updatedMatch = await this.matchModel.update(id, updatedMatchScore);
 
-    if (!updatedMatch) {
-      return {
-        status: 'CONFLICT',
-        data: { message: `There are no updates to perform in Match ${id}` },
-      };
-    }
+    await this.matchModel.update(id, updatedMatchScore);
+
     return { status: 'SUCCESSFUL', data: { message: 'Score updated' } };
   }
 
@@ -63,5 +55,13 @@ export default class MatchService {
     const newMatch = { ...match, inProgress: true };
     const createdMatch = await this.matchModel.create(newMatch);
     return { status: 'SUCCESSFUL', data: createdMatch };
+  }
+
+  public async getLeaderBoardHome(): Promise<ServiceResponse<ILeaderBoard[]>> {
+    const matches = await this.matchModel.findAll();
+
+    const data = generateLeaderBoard(matches, 'homeTeam');
+
+    return { status: 'SUCCESSFUL', data };
   }
 }

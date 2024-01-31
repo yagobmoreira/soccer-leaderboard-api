@@ -62,4 +62,9 @@ export default class MatchController {
     const { data } = await this.matchService.createMatch(req.body);
     res.status(201).json(data);
   }
+
+  public async getLeaderBoardHome(req: Request, res: Response) {
+    const { status, data } = await this.matchService.getLeaderBoardHome();
+    res.status(mapStatusHTTP(status)).json(data);
+  }
 }
