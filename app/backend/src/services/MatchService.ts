@@ -28,7 +28,6 @@ export default class MatchService {
 
     const finishedMatch = { ...foundMatch, inProgress: false };
     const updatedMatch = await this.matchModel.update(id, finishedMatch);
-    console.log(updatedMatch);
 
     if (!updatedMatch) {
       return {
