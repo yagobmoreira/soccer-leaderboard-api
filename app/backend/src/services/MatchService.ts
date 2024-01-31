@@ -1,3 +1,4 @@
+import sortClassification from '../utils/sortClassification';
 import generateLeaderBoard from '../utils/leaderBoardUtils';
 import { ILeaderBoard } from '../Interfaces/leaderboard/ILeaderBoard';
 import { NewEntity } from '../Interfaces';
@@ -61,7 +62,17 @@ export default class MatchService {
     const matches = await this.matchModel.findAll();
 
     const data = generateLeaderBoard(matches, 'homeTeam');
+    const teamsWithEfficiecy = data.map((leaderBoard) => {
+      const obj = leaderBoard;
+      return {
+        ...obj,
+        efficiency:
+          Number(((leaderBoard.totalPoints / (leaderBoard.totalGames * 3)) * 100).toFixed(2)),
+      };
+    });
 
-    return { status: 'SUCCESSFUL', data };
+    const sortedClassification = sortClassification(teamsWithEfficiecy);
+
+    return { status: 'SUCCESSFUL', data: sortedClassification };
   }
 }

@@ -12,10 +12,17 @@ const generateTeamTable = (team: string): ILeaderBoard => ({
   totalLosses: 0,
   goalsFavor: 0,
   goalsOwn: 0,
+  goalsBalance: 0,
+  efficiency: 0,
 });
 
 const calculatePoints = (team: ILeaderBoard, match: IMatchWithTeamName): ILeaderBoard => {
   const updatedTeam = { ...team };
+
+  updatedTeam.totalGames += 1;
+  updatedTeam.goalsFavor += match.homeTeamGoals;
+  updatedTeam.goalsOwn += match.awayTeamGoals;
+  updatedTeam.goalsBalance += match.homeTeamGoals - match.awayTeamGoals;
 
   if (match.homeTeamGoals > match.awayTeamGoals) {
     updatedTeam.totalPoints += 3;
@@ -46,10 +53,6 @@ const generateLeaderBoard = (
     const updatedTeam = calculatePoints(teamStats[team], match);
 
     teamStats[team] = updatedTeam;
-
-    teamStats[team].totalGames += 1;
-    teamStats[team].goalsFavor += match.homeTeamGoals;
-    teamStats[team].goalsOwn += match.awayTeamGoals;
   });
 
   const leaderBoardArray: ILeaderBoard[] = Object.values(teamStats);
