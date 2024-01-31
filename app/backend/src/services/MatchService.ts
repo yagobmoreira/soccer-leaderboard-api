@@ -62,17 +62,38 @@ export default class MatchService {
     const matches = await this.matchModel.findAll();
 
     const data = generateLeaderBoard(matches, 'homeTeam');
+    const teamsWithEfficiecy = MatchService.generateEfficiency(data);
+
+    const sortedClassification = sortClassification(teamsWithEfficiecy);
+
+    return { status: 'SUCCESSFUL', data: sortedClassification };
+  }
+
+  public async getLeaderBoardAway(): Promise<ServiceResponse<ILeaderBoard[]>> {
+    const matches = await this.matchModel.findAll();
+
+    const data = generateLeaderBoard(matches, 'awayTeam');
+
+    const teamsWithEfficiecy = MatchService.generateEfficiency(data);
+
+    const sortedClassification = sortClassification(teamsWithEfficiecy);
+
+    return { status: 'SUCCESSFUL', data: sortedClassification };
+  }
+
+  // public async getLeaderBoard(): Promise<ServiceResponse<ILeaderBoard[]>> {
+  //   const matches = await this.matchModel.findAll();
+  // }
+
+  static generateEfficiency(data: ILeaderBoard[]): ILeaderBoard[] {
     const teamsWithEfficiecy = data.map((leaderBoard) => {
-      const obj = leaderBoard;
+      const obj = { ...leaderBoard };
       return {
         ...obj,
         efficiency:
           Number(((leaderBoard.totalPoints / (leaderBoard.totalGames * 3)) * 100).toFixed(2)),
       };
     });
-
-    const sortedClassification = sortClassification(teamsWithEfficiecy);
-
-    return { status: 'SUCCESSFUL', data: sortedClassification };
+    return teamsWithEfficiecy;
   }
 }

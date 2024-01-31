@@ -67,4 +67,14 @@ export default class MatchController {
     const { status, data } = await this.matchService.getLeaderBoardHome();
     res.status(mapStatusHTTP(status)).json(data);
   }
+
+  public async getLeaderBoardAway(req: Request, res: Response) {
+    const { status, data } = await this.matchService.getLeaderBoardAway();
+    res.status(mapStatusHTTP(status)).json(data);
+  }
+
+  // public async getLeaderBoard(req: Request, res: Response) {
+  //   const { status, data } = await this.matchService.getLeaderBoard();
+  //   res.status(mapStatusHTTP(status)).json(data);
+  // }
 }

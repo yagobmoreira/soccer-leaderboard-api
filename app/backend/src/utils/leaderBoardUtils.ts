@@ -16,24 +16,52 @@ const generateTeamTable = (team: string): ILeaderBoard => ({
   efficiency: 0,
 });
 
-const calculatePoints = (team: ILeaderBoard, match: IMatchWithTeamName): ILeaderBoard => {
-  const updatedTeam = { ...team };
+const calculateResults = (teamGoals: number, opponentGoals: number) => {
+  let pointsToAdd = 0;
+  let victoriesToAdd = 0;
+  let drawsToAdd = 0;
+  let lossesToAdd = 0;
 
-  updatedTeam.totalGames += 1;
-  updatedTeam.goalsFavor += match.homeTeamGoals;
-  updatedTeam.goalsOwn += match.awayTeamGoals;
-  updatedTeam.goalsBalance += match.homeTeamGoals - match.awayTeamGoals;
-
-  if (match.homeTeamGoals > match.awayTeamGoals) {
-    updatedTeam.totalPoints += 3;
-    updatedTeam.totalVictories += 1;
-  } else if (match.homeTeamGoals === match.awayTeamGoals) {
-    updatedTeam.totalPoints += 1;
-    updatedTeam.totalDraws += 1;
+  if (teamGoals > opponentGoals) {
+    pointsToAdd = 3;
+    victoriesToAdd = 1;
+  } else if (teamGoals === opponentGoals) {
+    pointsToAdd = 1;
+    drawsToAdd = 1;
   } else {
-    updatedTeam.totalLosses += 1;
+    lossesToAdd = 1;
   }
-  return updatedTeam;
+
+  return { pointsToAdd, victoriesToAdd, drawsToAdd, lossesToAdd };
+};
+
+const getTeamGoals = (teamType: TeamType, match: IMatchWithTeamName) => {
+  const isHomeTeam = teamType === 'homeTeam';
+  const { homeTeamGoals, awayTeamGoals } = match;
+  const teamGoals = isHomeTeam ? homeTeamGoals : awayTeamGoals;
+  const opponentGoals = isHomeTeam ? awayTeamGoals : homeTeamGoals;
+  return { teamGoals, opponentGoals };
+};
+
+const calculatePoints = (team: ILeaderBoard, match: IMatchWithTeamName, teamType: TeamType)
+: ILeaderBoard => {
+  const { teamGoals, opponentGoals } = getTeamGoals(teamType, match);
+
+  const { pointsToAdd, victoriesToAdd, drawsToAdd, lossesToAdd } = calculateResults(
+    teamGoals,
+    opponentGoals,
+  );
+
+  return { ...team,
+    totalGames: team.totalGames + 1,
+    goalsFavor: team.goalsFavor + teamGoals,
+    goalsOwn: team.goalsOwn + opponentGoals,
+    goalsBalance: team.goalsBalance + teamGoals - opponentGoals,
+    totalPoints: team.totalPoints + pointsToAdd,
+    totalVictories: team.totalVictories + victoriesToAdd,
+    totalDraws: team.totalDraws + drawsToAdd,
+    totalLosses: team.totalLosses + lossesToAdd,
+  };
 };
 
 const generateLeaderBoard = (
@@ -50,7 +78,7 @@ const generateLeaderBoard = (
       teamStats[team] = generateTeamTable(team);
     }
 
-    const updatedTeam = calculatePoints(teamStats[team], match);
+    const updatedTeam = calculatePoints(teamStats[team], match, teamT);
 
     teamStats[team] = updatedTeam;
   });
