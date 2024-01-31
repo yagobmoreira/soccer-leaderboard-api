@@ -14,7 +14,6 @@ class Validations {
     const { error } = schemas.loginSchema.validate(data);
 
     if (error) {
-      console.log(error);
       const errorStatus = verifyErrorType(error.details[0].type);
       return res.status(errorStatus).json({ message: error.message });
     }
