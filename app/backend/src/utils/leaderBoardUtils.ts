@@ -52,7 +52,8 @@ const calculatePoints = (team: ILeaderBoard, match: IMatchWithTeamName, teamType
     opponentGoals,
   );
 
-  return { ...team,
+  return {
+    ...team,
     totalGames: team.totalGames + 1,
     goalsFavor: team.goalsFavor + teamGoals,
     goalsOwn: team.goalsOwn + opponentGoals,
@@ -64,21 +65,21 @@ const calculatePoints = (team: ILeaderBoard, match: IMatchWithTeamName, teamType
   };
 };
 
-const generateLeaderBoard = (
+export const generateTeamStats = (
   matches: IMatchWithTeamName[],
-  teamT: TeamType,
+  teamType: TeamType,
 ): ILeaderBoard[] => {
   const teamStats: Record<string, ILeaderBoard> = {};
 
   matches.forEach((match) => {
     if (match.inProgress) return;
-    const team = match[teamT].teamName;
+    const team = match[teamType].teamName;
 
     if (!teamStats[team]) {
       teamStats[team] = generateTeamTable(team);
     }
 
-    const updatedTeam = calculatePoints(teamStats[team], match, teamT);
+    const updatedTeam = calculatePoints(teamStats[team], match, teamType);
 
     teamStats[team] = updatedTeam;
   });
@@ -88,4 +89,30 @@ const generateLeaderBoard = (
   return leaderBoardArray;
 };
 
-export default generateLeaderBoard;
+export function generateLeaderBoard(matches: IMatchWithTeamName[]): ILeaderBoard[] {
+  const teamStats: Record<string, ILeaderBoard> = {};
+
+  matches.forEach((match) => {
+    const { homeTeam, awayTeam, inProgress } = match;
+    if (inProgress) return;
+
+    if (!teamStats[homeTeam.teamName]) {
+      teamStats[homeTeam.teamName] = generateTeamTable(homeTeam.teamName);
+    }
+
+    if (!teamStats[awayTeam.teamName]) {
+      teamStats[awayTeam.teamName] = generateTeamTable(awayTeam.teamName);
+    }
+
+    const homeTeamStats = teamStats[homeTeam.teamName];
+    const awayTeamStats = teamStats[awayTeam.teamName];
+
+    const updatedHomeTeamStats = calculatePoints(homeTeamStats, match, 'homeTeam');
+    const updatedAwayTeamStats = calculatePoints(awayTeamStats, match, 'awayTeam');
+
+    teamStats[homeTeam.teamName] = updatedHomeTeamStats;
+    teamStats[awayTeam.teamName] = updatedAwayTeamStats;
+  });
+
+  return Object.values(teamStats);
+}

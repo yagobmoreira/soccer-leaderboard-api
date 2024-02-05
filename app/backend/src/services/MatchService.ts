@@ -1,11 +1,11 @@
 import sortClassification from '../utils/sortClassification';
-import generateLeaderBoard from '../utils/leaderBoardUtils';
 import { ILeaderBoard } from '../Interfaces/leaderboard/ILeaderBoard';
 import { NewEntity } from '../Interfaces';
 import { ServiceMessage, ServiceResponse } from '../Interfaces/ServiceResponse';
 import { IMatch } from '../Interfaces/matches/IMatch';
 import MatchModel from '../models/MatchModel';
 import { IMatchModel } from '../Interfaces/matches/IMatchModel';
+import { generateLeaderBoard, generateTeamStats } from '../utils/leaderBoardUtils';
 
 type updateScoreParams = {
   homeTeamGoals: number,
@@ -61,8 +61,8 @@ export default class MatchService {
   public async getLeaderBoardHome(): Promise<ServiceResponse<ILeaderBoard[]>> {
     const matches = await this.matchModel.findAll();
 
-    const data = generateLeaderBoard(matches, 'homeTeam');
-    const teamsWithEfficiecy = MatchService.generateEfficiency(data);
+    const homeTeamStats = generateTeamStats(matches, 'homeTeam');
+    const teamsWithEfficiecy = MatchService.generateEfficiency(homeTeamStats);
 
     const sortedClassification = sortClassification(teamsWithEfficiecy);
 
@@ -72,18 +72,26 @@ export default class MatchService {
   public async getLeaderBoardAway(): Promise<ServiceResponse<ILeaderBoard[]>> {
     const matches = await this.matchModel.findAll();
 
-    const data = generateLeaderBoard(matches, 'awayTeam');
+    const awayTeamStats = generateTeamStats(matches, 'awayTeam');
 
-    const teamsWithEfficiecy = MatchService.generateEfficiency(data);
+    const teamsWithEfficiecy = MatchService.generateEfficiency(awayTeamStats);
 
     const sortedClassification = sortClassification(teamsWithEfficiecy);
 
     return { status: 'SUCCESSFUL', data: sortedClassification };
   }
 
-  // public async getLeaderBoard(): Promise<ServiceResponse<ILeaderBoard[]>> {
-  //   const matches = await this.matchModel.findAll();
-  // }
+  public async getLeaderBoard(): Promise<ServiceResponse<ILeaderBoard[]>> {
+    const matches = await this.matchModel.findAll();
+
+    const teamStats = generateLeaderBoard(matches);
+
+    const teamStatsWithEfficiency = MatchService.generateEfficiency(teamStats);
+
+    const sortedClassification = sortClassification(teamStatsWithEfficiency);
+
+    return { status: 'SUCCESSFUL', data: sortedClassification };
+  }
 
   static generateEfficiency(data: ILeaderBoard[]): ILeaderBoard[] {
     const teamsWithEfficiecy = data.map((leaderBoard) => {

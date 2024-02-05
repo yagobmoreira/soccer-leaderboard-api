@@ -15,9 +15,9 @@ leaderBoardRouter.get(
   (req: Request, res: Response) => matchController.getLeaderBoardAway(req, res),
 );
 
-// leaderBoardRouter.get(
-//   '/',
-//   (req: request, res: Response) => matchController.getLeaderBoardAway(req, res),
-// );
+leaderBoardRouter.get(
+  '/',
+  (req: Request, res: Response) => matchController.getLeaderBoard(req, res),
+);
 
 export default leaderBoardRouter;
