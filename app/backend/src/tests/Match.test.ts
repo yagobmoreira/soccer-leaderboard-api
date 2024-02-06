@@ -10,7 +10,6 @@ import MatchController from '../controllers/MatchController';
 import chaiHttp = require('chai-http');
 
 import { App } from '../app';
-import SequelizeTeam from '../database/models/SequelizeTeam';
 
 chai.use(chaiHttp);
 
