@@ -8,6 +8,7 @@ const invalidLoginBody = { email: invalidEmail, password: validPassword };
 const invalidPasswordLoginBody = { email: validEmail, password: 'any-password' };
 const noEmailLoginBody = {email: '', password: validPassword};
 const noPasswordLoginBody = {email: validEmail, password: ''};
+const validToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInJvbGUiOiJhZG1pbiIsImVtYWlsIjoiYWRtaW5AYWRtaW4uY29tIiwiaWF0IjoxNzA3MjE5MTQ3LCJleHAiOjE3MDczMDU1NDd9.NvtM6fMXU7nL7RCdmFI0G_Y5CJ6dLTRjnA0Hqs2EISE"
 
 const existingUser = {
   id: 1,
@@ -23,5 +24,6 @@ export {
   noEmailLoginBody,
   noPasswordLoginBody,
   invalidLoginBody,
-  invalidPasswordLoginBody
+  invalidPasswordLoginBody, 
+  validToken
 }

@@ -32,11 +32,7 @@ export default class MatchController {
     const { id } = req.params;
     const { status, data } = await this.matchService.updateMatchScore(Number(id), req.body);
 
-    if (status !== 'SUCCESSFUL') {
-      return res.status(mapStatusHTTP(status)).json(data);
-    }
-
-    res.status(200).json(data);
+    res.status(mapStatusHTTP(status)).json(data);
   }
 
   static async verifyTeams(homeTeamId: number, awayTeamId: number): Promise<boolean> {

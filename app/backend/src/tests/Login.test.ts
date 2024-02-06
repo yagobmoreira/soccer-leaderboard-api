@@ -4,6 +4,7 @@ import * as bcrypt from 'bcryptjs';
 import SequelizeUser from '../database/models/SequelizeUser';
 import * as loginMock from './mocks/login.mocks';
 import Validations from '../middlewares/Validations';
+import * as jwt from 'jsonwebtoken';
 // @ts-ignore
 import chaiHttp = require('chai-http');
 
@@ -86,9 +87,18 @@ describe('Login tests', function () {
 
     expect(status).to.be.equal(401);
     expect(body).to.be.deep.equal({message: 'Invalid email or password'});
+  });
+
+  it('Retornar a role se o usuário estiver autenticado', async function () {
+
+    sinon.stub(jwt, 'verify').resolves({ role: "admin"});
+
+    const { status } = await chai
+      .request(app)
+      .get("/login/role")
+      .set({'Authorization': `Bearer ${loginMock.validToken}`})
+
+    expect(status).to.be.equal(200)
   })
-
-
   afterEach(sinon.restore);
-
 })
