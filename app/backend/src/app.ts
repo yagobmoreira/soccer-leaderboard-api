@@ -1,5 +1,7 @@
 import * as express from 'express';
 import 'express-async-errors';
+import * as swaggerUi from 'swagger-ui-express';
+import * as swaggerDocs from './swagger.json';
 import router from './routes';
 
 import errorMiddleware from './middlewares/errorMiddleware';
@@ -32,7 +34,7 @@ class App {
       res.header('Access-Control-Allow-Headers', '*');
       next();
     };
-
+    this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
     this.app.use(express.json());
     this.app.use(accessControl);
   }
